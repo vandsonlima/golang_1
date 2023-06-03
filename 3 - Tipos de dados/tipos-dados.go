@@ -52,6 +52,4 @@ func main() {
 	texto := 5
 	fmt.Println(texto)
 
-	//teste
-
 }
