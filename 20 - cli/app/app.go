@@ -8,38 +8,29 @@ import (
 )
 
 func Gerar() *cli.App {
-	/*app := cli.App{
-		Name:  "Aplicação teste",
-		Usage: "busca ips e nomes do servidor na internet",
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:  "host",
-				Value: "devbook.com.br",
-			},
-		},
-		Commands: []*cli.Command{
-			{
-				Name:   "ip",
-				Usage:  "Busca ips de enderecos",
-				Action: buscarIps,
-			},
-		},
-	}*/
 	app := cli.NewApp()
 	app.Name = "Aplicação teste"
 	app.Usage = "Busca ips de enderecos"
 
+	flags := []cli.Flag{
+		cli.StringFlag{
+			Name:  "host",
+			Value: "devbook.com.br",
+		},
+	}
+
 	app.Commands = []cli.Command{
 		{
-			Name:  "ip",
-			Usage: "Busca IPs",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "host",
-					Value: "devbook.com.br",
-				},
-			},
+			Name:   "ip",
+			Usage:  "Busca IPs",
+			Flags:  flags,
 			Action: buscarIps,
+		},
+		{
+			Name:   "server",
+			Usage:  "find servers",
+			Flags:  flags,
+			Action: findServers,
 		},
 	}
 	return app
@@ -55,4 +46,16 @@ func buscarIps(context *cli.Context) error {
 		fmt.Println(ip)
 	}
 	return nil
+}
+
+func findServers(ctx *cli.Context) {
+	host := ctx.String("host")
+	servers, err := net.LookupNS(host)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, server := range servers {
+		fmt.Println(server)
+	}
 }
