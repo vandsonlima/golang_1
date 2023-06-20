@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  mysql:
+    container_name: mysql-db
+    image: mysql/mysql-server
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: vandson
+      MYSQL_USER: vandson
+      MYSQL_PASSWORD: vandson
+      MYSQL_DATABASE: dbUser
+    ports:
+      - "3306:3306"
+
+  flyway:
+    image: flyway/flyway:latest
+    container_name: project-flyway
+    command: -locations=filesystem:/flyway/sql -connectRetries=4 migrate
+    volumes:
+      - ${PWD}/scripts/flyway/sql:/flyway/sql
+    environment:
+      - FLYWAY_CONNECT_RETRIES=3
+      - FLYWAY_USER=vandson
+      - FLYWAY_PASSWORD=vandson
+      - FLYWAY_URL=jdbc:mysql://mysql:3306/dbUser
+    depends_on:
+      - mysql
